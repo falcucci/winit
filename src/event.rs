@@ -145,6 +145,9 @@ pub enum StartCause {
 
     /// Sent once, immediately after `run` is called. Indicates that the loop was just initialized.
     Init,
+
+    /// Sent if the event loop is being resumed after the loop's control flow was set to
+    CreateWindow,
 }
 
 /// Describes an event from a [`Window`].
