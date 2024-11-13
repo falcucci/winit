@@ -4,6 +4,7 @@ use std::rc::Weak;
 use std::time::Instant;
 
 use objc2::rc::Retained;
+use objc2::runtime::AnyObject;
 use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass};
 use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate};
 use objc2_foundation::{MainThreadMarker, NSNotification, NSObject, NSObjectProtocol};
@@ -67,6 +68,15 @@ declare_class!(
         #[method(applicationWillTerminate:)]
         fn app_will_terminate(&self, notification: &NSNotification) {
             self.will_terminate(notification)
+        }
+
+        #[method(neovideCreateWindow:)]
+        fn create_window(&self, _: Option<&AnyObject>) {
+            println!("New window requested");
+            if self.is_launched() {
+                println!("Creating window");
+                self.dispatch_create_window_events();
+            }
         }
     }
 );
@@ -308,6 +318,13 @@ impl ApplicationDelegate {
         self.handle_event(Event::NewEvents(StartCause::Init));
         // NB: For consistency all platforms must emit a 'resumed' event even though macOS
         // applications don't themselves have a formal suspend/resume lifecycle.
+        self.handle_event(Event::Resumed);
+    }
+
+    pub fn dispatch_create_window_events(&self) {
+        println!("dispatch_create_window_events");
+        self.handle_event(Event::NewEvents(StartCause::CreateWindow));
+
         self.handle_event(Event::Resumed);
     }
 

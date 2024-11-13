@@ -23,6 +23,18 @@ pub fn initialize(app: &NSApplication) {
     let about_item =
         menu_item(mtm, &about_item_title, Some(sel!(orderFrontStandardAboutPanel:)), None);
 
+    // New Window menu item
+    let new_window_item_title = ns_string!("New Window").stringByAppendingString(&process_name);
+    let new_window_item = menu_item(
+        mtm,
+        &new_window_item_title,
+        Some(sel!(neovideCreateWindow:)),
+        Some(KeyEquivalent {
+            key: ns_string!("n"),
+            masks: Some(NSEventModifierFlags::NSEventModifierFlagCommand),
+        }),
+    );
+
     // Services menu item
     let services_menu = NSMenu::new(mtm);
     let services_item = menu_item(mtm, ns_string!("Services"), None, None);
@@ -73,6 +85,7 @@ pub fn initialize(app: &NSApplication) {
     );
 
     app_menu.addItem(&about_item);
+    app_menu.addItem(&new_window_item);
     app_menu.addItem(&sep_first);
     app_menu.addItem(&services_item);
     app_menu.addItem(&hide_item);
