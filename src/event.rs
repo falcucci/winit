@@ -131,11 +131,17 @@ pub enum StartCause {
     /// guaranteed to be equal to or after the requested resume time.
     ///
     /// [`ControlFlow::WaitUntil`]: crate::event_loop::ControlFlow::WaitUntil
-    ResumeTimeReached { start: Instant, requested_resume: Instant },
+    ResumeTimeReached {
+        start: Instant,
+        requested_resume: Instant,
+    },
 
     /// Sent if the OS has new events to send to the window, after a wait was requested. Contains
     /// the moment the wait was requested and the resume time, if requested.
-    WaitCancelled { start: Instant, requested_resume: Option<Instant> },
+    WaitCancelled {
+        start: Instant,
+        requested_resume: Option<Instant>,
+    },
 
     /// Sent if the event loop is being resumed after the loop's control flow was set to
     /// [`ControlFlow::Poll`].
@@ -145,6 +151,12 @@ pub enum StartCause {
 
     /// Sent once, immediately after `run` is called. Indicates that the loop was just initialized.
     Init,
+
+    /// Sent if the event loop was woken up specifically to handle pending window creation
+    /// requests initiated through [`ActiveEventLoop::create_window`].
+    ///
+    /// [`ActiveEventLoop::create_window`]: crate::event_loop::ActiveEventLoop::create_window
+    CreateWindow,
 }
 
 /// Describes an event from a [`Window`].
